@@ -29,7 +29,7 @@ class AuthController extends Controller
 
         try {
             /** Encrypt pass with your method */
-            $pass=hash('sha256',md5(md5($request->input('pass'))));
+            $pass=hash('sha256',md5($request->input('pass')));
             $data=
             [
                 /** Column on DB login_user */
@@ -40,7 +40,7 @@ class AuthController extends Controller
             //return $data;
             if (! $token = $this->jwt->attempt($data))
             {
-                return response()->json(['id'=>-1,'error'=>'Credenciales incorrectas'], 404);
+                return response()->json(['id'=>-1,'error'=>'Credenciales incorrectas'], 401);
             }
 
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
@@ -62,6 +62,8 @@ class AuthController extends Controller
 
     public function getSession(Request $request)
     {
-        return response()->json(['id'=>1,'me'=>$request->auth->login_user,'data'=>[$request->auth]]);
+        $userOnSession=$request->auth->user();
+        $newToken = $this->jwt->parseToken()->refresh();
+        return response()->json(['id'=>1,'me'=>$request->auth->user()->login_user,'data'=>[$userOnSession],"token"=>$newToken],200);
     }
 }

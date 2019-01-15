@@ -38,8 +38,8 @@ class Authenticate
         if ($this->auth->guard($guard)->guest()) {
             return response(["id"=>-1,"data"=>'Unauthorized'], 401);
         }
-        /** PUT User on request to use it on Controllers */
-        $request->auth=$this->auth->user();
+        /** PUT auth Object on request to use it on Controllers */
+        $request->auth=$this->auth;
         return $next($request);
     }
 }

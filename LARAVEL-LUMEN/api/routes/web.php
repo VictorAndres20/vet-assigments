@@ -11,10 +11,7 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
-
+/** Generete keys */
 $router->get('/key', function () use ($router) {
     return str_random(32);
 });
@@ -22,14 +19,58 @@ $router->get('/key', function () use ($router) {
 /** Authenticate */
 $router->post('/auth/login', 'AuthController@login');
 
+/** Register user */
+$router->post('/createuser','UserController@create');
+
+/** Register new Client */
+$router->post('/createclient','ClientController@create');
+
+/** Register new Pet */
+$router->post('/createpet','PetController@create');
+
+/** Create Assigment */
+$router->post('/createassign','AssignController@create');
+
 /** Protected routes */
 $router->group(['middleware' => 'auth:api'], function($router)
 {
-    $router->get('/test', function() {
-        return response()->json([
-            'message' => 'Hello World!',
-        ]);
-    });
-
+    /*********************************************************
+     * GETTERS
+     */
     $router->get('/getsession','AuthController@getSession');
+    $router->get('/getuserbyid/{id}','UserController@getUserById');
+    $router->get('/getpetsbyclient/{cod_client}','PetController@getByClient');
+    $router->get('/getservicesbyvet/{cod_vet}','ServiceController@getServicesByVet');
+    $router->get('/getservicesbycity/{cod_city}','ServiceController@getServicesByCity');
+
+    /*********************************************************
+     * POSTS
+     */
+    $router->post('/createtservice','ServiceController@createT');
+    $router->post('/createcity','CityController@create');
+    $router->post('/createvet','VetController@create');
+    $router->post('/createservice','ServiceController@create');
+
+    /*********************************************************
+    * PUTS
+    */
+
+
+});
+
+/** Presentation */
+$router->get('/', function () use ($router)
+{
+    $html='
+    <DOCTYPE html>
+    <html>
+    <head>
+    <title>VSA API</title>
+    </head>
+    <body>
+    '.$router->app->version().'
+    </body>
+    </html>
+    ';
+    return $html;
 });
