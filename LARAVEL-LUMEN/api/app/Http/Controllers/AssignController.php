@@ -17,21 +17,19 @@ class AssignController extends Controller
         $inputs=json_decode(file_get_contents('php://input'),true);
         $service=Service::find($inputs['cod_service']);
         $quant=$service->quant_hour;
-        $assigns=Assigment::where('cod_service',$inputs['cod_service'])->where('date_assign',$inputs['date_assign'])->get();
+        $assigns=Assigment::where('cod_state',1)->where('cod_service',$inputs['cod_service'])->where('date_assign',$inputs['date_assign'])->where('time_assign',$inputs['time_assign'])->get();
         if(count($assigns)==$quant)
         {
             $data="Lleno";
         }
         else
         {
-            /** NEED SQL OR state 1 or state 3 
-             * 
-            */
-            $petassign=Assigment::where('cod_state',3)->where('cod_service',$inputs['cod_service'])->where('cod_pet',$inputs['cod_pet'])->where('date_assign',$inputs['date_assign'])->get();
+            $petassign=Assigment::getPreviousAssigment($inputs['cod_service'],$inputs['cod_pet'],$inputs['date_assign'],$inputs['time_assign']);
             /** */
             if(count($petassign)>0)
             {
-                $data="Ya ha sido asignado tu mascota para este servicio";
+                $data="Ya ha sido asignada tu mascota para este servicio";
+                $resCode=400;
             }
             else
             {
@@ -48,6 +46,32 @@ class AssignController extends Controller
                 }
             }
         }
+        return response()->json(["id"=>$id,"data"=>$data],$resCode);
+    }
+
+    public function modifyState($cod_assign)
+    {
+        $id=-1;
+        $data="Error";
+        $resCode=500;
+        $inputs=json_decode(file_get_contents('php://input'),true);
+        $assign=Assigment::find($cod_assign);
+        $actualState=$assign->cod_state;
+        if($actualState==5 || $actualState==4 || $actualState==2)
+        {
+            $data="La asignación se encuentra eliminada o completada, no se puede modificar de nuevo";
+            $resCode=400;
+        }
+        else
+        {
+            $assign->cod_state=$inputs['cod_state'];
+            if($assign->save())
+            {
+                $id=1;
+                $data="Realizado";
+                $resCode=202;
+            }
+        }        
         return response()->json(["id"=>$id,"data"=>$data],$resCode);
     }
 }

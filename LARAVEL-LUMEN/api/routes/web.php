@@ -28,8 +28,17 @@ $router->post('/createclient','ClientController@create');
 /** Register new Pet */
 $router->post('/createpet','PetController@create');
 
+/** Get Pets by client */
+$router->get('/getpetsbyclient/{cod_client}','PetController@getByClient');
+
 /** Create Assigment */
 $router->post('/createassign','AssignController@create');
+
+/** Get service by cod city */
+$router->get('/getservicesbycity/{cod_city}','ServiceController@getServicesByCity');
+
+/** Get services by cod vet */
+$router->get('/getservicesbyvet/{cod_vet}','ServiceController@getServicesByVet');
 
 /** Protected routes */
 $router->group(['middleware' => 'auth:api'], function($router)
@@ -38,10 +47,7 @@ $router->group(['middleware' => 'auth:api'], function($router)
      * GETTERS
      */
     $router->get('/getsession','AuthController@getSession');
-    $router->get('/getuserbyid/{id}','UserController@getUserById');
-    $router->get('/getpetsbyclient/{cod_client}','PetController@getByClient');
-    $router->get('/getservicesbyvet/{cod_vet}','ServiceController@getServicesByVet');
-    $router->get('/getservicesbycity/{cod_city}','ServiceController@getServicesByCity');
+    $router->get('/getuserbyid/{id}','UserController@getUserById');    
 
     /*********************************************************
      * POSTS
@@ -54,7 +60,7 @@ $router->group(['middleware' => 'auth:api'], function($router)
     /*********************************************************
     * PUTS
     */
-
+    $router->put('/modifystateassign/{cod_assign}','AssignController@modifyState');
 
 });
 
