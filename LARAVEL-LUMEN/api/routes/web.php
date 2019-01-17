@@ -46,6 +46,9 @@ $router->get('/getvetsbycity/{cod_city}','VetController@getVetsByCity');
 /** Get All cities */
 $router->get('/getcities','CityController@getAll');
 
+/** Get times for assigment on a date */
+$router->get('/gettimeassign/{date}/{cod_service}','AssignController@timeAvailable');
+
 /** Protected routes */
 $router->group(['middleware' => 'auth:api'], function($router)
 {

@@ -15,37 +15,29 @@ class AssignController extends Controller
         $data="Error";
         $resCode=500;
         $inputs=json_decode(file_get_contents('php://input'),true);
-        $service=Service::find($inputs['cod_service']);
-        $quant=$service->quant_hour;
-        $assigns=Assigment::where('cod_state',1)->where('cod_service',$inputs['cod_service'])->where('date_assign',$inputs['date_assign'])->where('time_assign',$inputs['time_assign'])->get();
-        if(count($assigns)==$quant)
+        
+        $petassign=Assigment::getPreviousAssigment($inputs['cod_service'],$inputs['cod_pet'],$inputs['date_assign'],$inputs['time_assign']);
+        /** */
+        if(count($petassign)>0)
         {
-            $data="Lleno";
+            $data="Ya has enviado solicitud para tu mascota en este servicio";
+            $resCode=400;
         }
         else
         {
-            $petassign=Assigment::getPreviousAssigment($inputs['cod_service'],$inputs['cod_pet'],$inputs['date_assign'],$inputs['time_assign']);
-            /** */
-            if(count($petassign)>0)
+            $assign=new Assigment();
+            $assign->cod_pet=$inputs['cod_pet'];
+            $assign->cod_service=$inputs['cod_service'];
+            $assign->cod_state=3;
+            $assign->date_assign=$inputs['date_assign'];
+            if($assign->save())
             {
-                $data="Ya ha sido asignada tu mascota para este servicio";
-                $resCode=400;
-            }
-            else
-            {
-                $assign=new Assigment();
-                $assign->cod_pet=$inputs['cod_pet'];
-                $assign->cod_service=$inputs['cod_service'];
-                $assign->cod_state=3;
-                $assign->date_assign=$inputs['date_assign'];
-                if($assign->save())
-                {
-                    $id=1;
-                    $data="Asignación realizada, esperando confirmación";
-                    $resCode=201;
-                }
+                $id=1;
+                $data="Asignación realizada, esperando confirmación";
+                $resCode=201;
             }
         }
+        
         return response()->json(["id"=>$id,"data"=>$data],$resCode);
     }
 
@@ -73,5 +65,10 @@ class AssignController extends Controller
             }
         }        
         return response()->json(["id"=>$id,"data"=>$data],$resCode);
+    }
+
+    public function timeAvailable($date,$cod_service)
+    {
+        return response()->json(["id"=>1,"data"=>Assigment::timeAvailable($date,$cod_service)],200);
     }
 }

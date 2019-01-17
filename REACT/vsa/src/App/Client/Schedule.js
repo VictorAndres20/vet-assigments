@@ -1,15 +1,25 @@
 import React from 'react';
+import FormAssign from '../../Components/Forms/FormAssign.js';
 
 export default class Schedule extends React.Component
 {
     state=
     {
-        timeAvailable:[]
+        renderPets:false,
+        renderFormClient:false
     }
 
-    loadDisponibility=(service,date)=>
+    renderNext=()=>
     {
-
+        if(this.state.renderPets===true)
+        {
+            return(<div>Pets</div>);
+        }
+        if(this.state.renderFormClient===true)
+        {
+            return(<div>New Client</div>);
+        }
+        return(<div>Completa el formulario de asignación para el siguiente paso</div>);
     }
 
     render()
@@ -17,12 +27,13 @@ export default class Schedule extends React.Component
         return(
             <div className="container-fluid">
                 <div className="row">
-                    <div className="col-sm-4 text-center">
-                        <h4>Asignación {this.props.match.params.id}</h4>
-                        <h5>Fecha:</h5>
-                        <input id="date" type="date"/>
-                        <hr/>
-                        <button type="button" class="btn btn-cyan">Ver disponibilidad</button>
+                    <div className="col-sm-6 text-center">
+                        <FormAssign
+                            id={this.props.match.params.id}
+                        />
+                    </div>
+                    <div className="col-sm-6 text-center">
+                        {this.renderNext()}
                     </div>
                 </div>
             </div>
