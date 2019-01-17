@@ -40,6 +40,12 @@ $router->get('/getservicesbycity/{cod_city}','ServiceController@getServicesByCit
 /** Get services by cod vet */
 $router->get('/getservicesbyvet/{cod_vet}','ServiceController@getServicesByVet');
 
+/** Get vet by city */
+$router->get('/getvetsbycity/{cod_city}','VetController@getVetsByCity');
+
+/** Get All cities */
+$router->get('/getcities','CityController@getAll');
+
 /** Protected routes */
 $router->group(['middleware' => 'auth:api'], function($router)
 {

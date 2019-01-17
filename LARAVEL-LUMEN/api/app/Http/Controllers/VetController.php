@@ -37,4 +37,10 @@ class VetController extends Controller
         }
         return response()->json(["id"=>$id,"data"=>$data],$resCode);
     }
+
+    public function getVetsByCity($cod_city)
+    {
+        $vets=Vet::getVetsByCity($cod_city);
+        return response()->json(["id"=>1,"data"=>$vets],200);
+    }
 }

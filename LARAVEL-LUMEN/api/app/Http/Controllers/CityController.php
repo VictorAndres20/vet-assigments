@@ -31,4 +31,10 @@ class CityController extends Controller
         }        
         return response()->json(["id"=>$id,"data"=>$data],$resCode);
     } 
+
+    public function getAll()
+    {
+        $cities=City::all();
+        return response()->json(["id"=>1,"data"=>$cities],200);
+    }
 }
